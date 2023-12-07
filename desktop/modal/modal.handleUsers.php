@@ -57,7 +57,9 @@ $eqLogics = eqLogic::byType('zeroTier');
 								<th>{{Status Network}}</th>
 								<th>{{Utilisateur}}</th>
 								<th>{{Identifiant}}</th>
+								<th>{{IP Assignement}}</th>
 								<th>{{Nom}}</th>
+								<th></th>
 								<th></th>
 							</tr>
 						</thead>
@@ -69,18 +71,13 @@ $eqLogics = eqLogic::byType('zeroTier');
 											   echo '<tr><td><span class="label label-info">' . $eqLogic->getCmd(null, 'accessType')->execCmd() . '</span></td>';
 											   echo '<td><span value="' . $user['id'] . '">' . ($user['name'] == '' ? 'Pas de nom' : $user['name']) . '</span></td><';
 											   echo '<td><span value="' . $user['config']['id']. '">' . $user['config']['id'] . '</span></td>';
+											   echo '<td><span value="' . $user['config']['ipAssignments'][0]. '">' . $user['config']['ipAssignments'][0] . '</span></td>';
+
 											   echo '<td><input value="' . $user['name']. '" data-userId="'.$user['config']['id'].'"></input></td>';
-											   echo '<td><button class="btn btn-success majDevice" data-userId="'.$user['config']['id'].'" data-networkId="'.$eqLogic->getLogicalId().'">Mettre a jour</button></td></tr>';
+											   echo '<td><button class="btn btn-success majDevice" data-userId="'.$user['config']['id'].'" data-networkId="'.$eqLogic->getLogicalId().'">Mettre a jour</button></td>';
+											   echo '<td><button class="btn btn-danger openLocalNetwork" data-userId="'.$user['config']['id'].'" data-networkId="'.$eqLogic->getLogicalId().'">Ouvrir Reseau Local</button></td></tr>';
 	
 										 }
-                  
-                    // echo '<td><select style="width:250px;" class="eqLogicAttr configuration form-control" id="selectUserqrCodeV2" onInput="userSelectqrCodev2()">';
-                    // echo '<option value="" disabled selected>{{Aucun}}</option>';
-                    // foreach ($userList  as $user) {
-                    //   echo '<option value="' . $user['id'] . '">' . ($user['name'] == '' ? 'Pas de nom' : $user['name']) . '</option>';
-
-                    // }
-                    // echo '</select></td>';
                   ?>
                 </tbody>
               </table>
@@ -96,6 +93,9 @@ $eqLogics = eqLogic::byType('zeroTier');
 <script>
 
 var btnsMaj = document.querySelectorAll('.majDevice');
+var btnsOpenLocal = document.querySelectorAll('.openLocalNetwork');
+
+
 
 
 btnsMaj.forEach(function(btn) {
@@ -133,6 +133,35 @@ btnsMaj.forEach(function(btn) {
 							location.reload();
 							
 							$('#div_alert').showAlert({ message: '{{Device mis à jour}}', level: 'success' })
+						}
+					})
+    });
+});
+
+
+btnsOpenLocal.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+			let userId = this.getAttribute('data-userId');
+			let networkId = this.getAttribute('data-networkId');
+				$.ajax({
+						type: 'POST',
+						url: 'plugins/zeroTier/core/ajax/zeroTier.ajax.php',
+						data: {
+							action: 'openLocalNetwork',
+							networkId : networkId,
+							userId : userId,
+
+						},
+						dataType: 'json',
+						error: function (request, status, error) {
+							handleAjaxError(request, status, error)
+						},
+						success: function (data) {
+							if (data.state != 'ok') {
+								$('#div_alert').showAlert({ message: data.result, level: 'danger' })
+								return
+							}					
+							$('#div_alert').showAlert({ message: '{{Reseau Ouvert}}', level: 'success' })
 						}
 					})
     });
