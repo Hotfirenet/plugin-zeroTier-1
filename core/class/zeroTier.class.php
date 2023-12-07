@@ -250,67 +250,18 @@ class zeroTier extends eqLogic {
     }
   }
 
-//   public static function apiRequest($string, $action) {
-//     $apiKey = config::byKey('apiKeyZeroTier', __CLASS__);
-//     if (empty($apiKey)) {
-//         return;
-//     }
-//     $ch = curl_init($string);
-//     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-//         'Content-Type: application/json',
-//         'Authorization: Bearer ' . $apiKey,
-//     ));
-
-//     if ($action == 'GET') {
-//         $request = curl_exec($ch);
-//         if (curl_errno($ch)) {
-//             log::add(__CLASS__, 'error', 'Erreur cURL : ' . curl_error($ch));
-//         } else {
-//             log::add(__CLASS__, 'debug', 'Requête GET : ' . $request);
-//         }
-//     }
-//     curl_close($ch);
-// }
-
-
-// public static function apiRequest($url, $method, $data = null) {
-//   $apiKey = config::byKey('apiKeyZeroTier', __CLASS__);
-//   if (empty($apiKey)) {
-//       return;
-//   }
-//   $ch = curl_init($url);
-
-//   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//   curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-//       'Content-Type: application/json',
-//       'Authorization: Bearer ' . $apiKey,
-//   ));
-
-//   if ($method == 'GET') {
-//   } elseif ($method == 'POST') {
-//       curl_setopt($ch, CURLOPT_POST, 1);
-//       curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-//   } elseif ($method == 'DELETE') {
-//       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-//   } else {
-//       log::add(__CLASS__, 'error', 'Méthode HTTP non supportée : ' . $method);
-//       curl_close($ch);
-//       return;
-//   }
-
-//   $response = curl_exec($ch);
-
-//   if (curl_errno($ch)) {
-//       log::add(__CLASS__, 'error', 'Erreur cURL : ' . curl_error($ch));
-//   } else {
-//       log::add(__CLASS__, 'debug', 'Requête ' . $method . ': ' . $response);
-//   }
-
-//   curl_close($ch);
-//   return $response;
-// }
-
+public static function accesLocalNetwork($jeedomZeroTierId){
+  shell_exec('sudo sysctl -w net.ipv4.ip_forward=1');
+  shell_exec('PHY_IFACE=eth0');
+  shell_exec('ZT_IFACE= '.$jeedomZeroTierId);
+  shell_exec('sudo iptables -t nat -A POSTROUTING -o $PHY_IFACE -j MASQUERADE');
+  shell_exec('sudo iptables -A FORWARD -i $PHY_IFACE -o $ZT_IFACE -m state --state');
+  shell_exec('RELATED,ESTABLISHED -j ACCEPT');
+  shell_exec('sudo iptables -A FORWARD -i $ZT_IFACE -o $PHY_IFACE -j ACCEPT');
+  shell_exec('sudo apt install iptables-persistent');
+  shell_exec('sudo bash -c iptables-save > /etc/iptables/rules.v4');
+  log::add('zeroTier', 'info', 'Accès au réseau local activé');
+}
 
 public static function apiRequest($url, $method, $data = null) {
   $apiKey = config::byKey('apiKeyZeroTier', __CLASS__);

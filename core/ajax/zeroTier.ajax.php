@@ -86,6 +86,11 @@ try {
       }
     }
 
+    if(init('action') == 'openLocalNetwork'){
+        zeroTier::accesLocalNetwork(init('userId'));
+        ajax::success();
+    }
+
 
 
 
