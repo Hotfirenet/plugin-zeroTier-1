@@ -2,7 +2,7 @@
 	"id" : "zeroTier",
 	"name" : "zeroTier",
 	"description" : {
-		"fr_FR": "Template servant de base à la création de plugins pour Jeedom"
+		"fr_FR": "Plugin pour le pilotage de zeroTier"
 	},
 	"licence" : "AGPL",
 	"author" : "Jeedom SAS",
@@ -11,10 +11,10 @@
 	"hasDependency" : false,
 	"hasOwnDeamon" : false,
 	"maxDependancyInstallTime" : 0,
-	"changelog" : "https://jeedom.github.io/plugin-template/#language#/changelog",
-	"documentation" : "https://jeedom.github.io/plugin-template/#language#/",
-	"changelog_beta" : "https://jeedom.github.io/plugin-template/#language#/beta/changelog",
-	"documentation_beta" : "https://jeedom.github.io/plugin-template/#language#/beta/",
+	"changelog" : "https://jeedom.github.io/plugin-zeroTier/#language#/changelog",
+	"documentation" : "https://jeedom.github.io/plugin-zeroTier/#language#/",
+	"changelog_beta" : "https://jeedom.github.io/plugin-zeroTier/#language#/beta/changelog",
+	"documentation_beta" : "https://jeedom.github.io/plugin-zeroTier/#language#/beta/",
 	"link" : {
 		"forum":"Lien vers le forum",
 		"video" : "Lien vers une video"
